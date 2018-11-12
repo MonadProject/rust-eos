@@ -1,0 +1,21 @@
+{
+  "version": "eosio::abi/1.0",
+  "structs": [
+    {
+      "name": "hi",
+      "base": "",
+      "fields": [
+        {
+          "name": "name",
+          "type": "name"
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "name": "hi",
+      "type": "hi"
+    }
+  ]
+}

@@ -61,11 +61,14 @@ exit
 curl http://localhost:7777/v1/chain/get_info
 ```
 
+
 <h5> 六、创建 cleos 别名 
 
 ```
 alias cleos='docker exec -it eosio /opt/eosio/bin/cleos --url http://127.0.0.1:7777 --wallet-url http://127.0.0.1:5555'
 ```
+
+
 
 ### 创建开发者钱包
 
@@ -75,7 +78,7 @@ alias cleos='docker exec -it eosio /opt/eosio/bin/cleos --url http://127.0.0.1:7
 cleos wallet create --to-console
 ```
 
-保存好返回的密码 PW5JhivXoP2ZBSqC68QrFzjN44WPagfQvHJs2dcZ2C3797aoStHUC
+保存好返回的密码 PW5JhivXoP2ZBSqC68QrFzjN44WPagfQvHJs2dcZ2C3797aoStHUC（仅开发模式下使用，生产模式另见文档）
 
 <h5> 二、打开钱包
 
@@ -105,10 +108,35 @@ cleos wallet import
 
 systen user: eosio 5KQwrPbwdL6PhXujxW37FSSQZ1JiwsST4cqQzDeyXtP79zkvFD3 请勿在生产环境使用
 
+EOS 的账户创建需要关联钱包公钥，并且同一个钱包公钥可以创建多个账户，但是各个账户是独立的
+
 
 ### 创建测试账户
 
 ```
 cleos create account eosio bob EOS6kZmiNLCGQX4a88r2zyfcyRjukJH5TwwpSNbgD3kkFsUcoXvgJ 
 cleos create account eosio alice EOS6kZmiNLCGQX4a88r2zyfcyRjukJH5TwwpSNbgD3kkFsUcoXvgJ
+```
+
+单机测试情况下使用账户 eosio 来创建账户，公网环境下需要一定的费用
+
+### 生成、优化 WASM 文件
+
+```
+cargo build --release --target=wasm32-unknown-unknown
+wasm-gc target/wasm32-unknown-unknown/release/hello.wasm hello_gc.wasm
+wasm-opt hello_gc.wasm --output hello_gc_opt.wasm -Oz
+```
+
+### 部署abi 和 wasm
+
+```
+cleos set abi hello /mnt/dev/project/hello.abi.json
+cleos set code hello /mnt/dev/project/hello_gc_opt.wasm
+```
+
+### 调用智能合约
+
+```
+cleos push action hello hi '["world"]' -p 'hello@active'
 ```
